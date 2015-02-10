@@ -1,12 +1,12 @@
-var exec = require('child_process').exec;
-
+var path = require('path');
+var notifier = require('node-notifier');
 
 var STRATEGIES = {
-    'darwin': function(msg) {
-        exec('terminal-notifier -title Webpack -message ' + msg);
+    'darwin': function() {
+        return new notifier.NotificationCenter()
     },
-    'linux': function(msg) {
-        exec('notify-send Webpack ' + msg);
+    'linux': function() {
+        return new notifier.NotifySend()
     }
 };
 
@@ -21,11 +21,11 @@ function WebpackErrorNotificationPlugin(strategy) {
     }
 
     if (typeof strategy === 'undefined') {
-        strategy = process.platform;
+        this.notifier = notifier;
     }
 
     if (STRATEGIES.hasOwnProperty(strategy)) {
-        this.notifier = STRATEGIES[strategy];
+        this.notifier = STRATEGIES[strategy]();
     }
 };
 
@@ -50,7 +50,7 @@ WebpackErrorNotificationPlugin.prototype.compileMessage = function(stats) {
 
     if (!this.lastBuildSucceeded) {
         this.lastBuildSucceeded = true;
-        return 'Successful build';
+        return 'Build successful';
     }
 };
 
@@ -58,8 +58,11 @@ WebpackErrorNotificationPlugin.prototype.compileMessage = function(stats) {
 WebpackErrorNotificationPlugin.prototype.compilationDone = function(stats) {
     var msg = this.compileMessage(stats);
     if (msg) {
-        msg = '"' + msg.replace('"', '\\"') + '"';
-        this.notifier(msg);
+        this.notifier.notify({
+            title: 'Webpack',
+            message: msg,
+            contentImage: path.join(__dirname, 'logo.png')
+        });
     }
 };
 
