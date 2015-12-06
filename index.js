@@ -11,9 +11,10 @@ var STRATEGIES = {
 };
 
 
-function WebpackErrorNotificationPlugin(strategy) {
+function WebpackErrorNotificationPlugin(strategy, opts) {
     this.lastBuildSucceeded = false;
     this.notifier = null;
+    this.opts = opts || { notifyWarnings: true };
 
     if (typeof strategy === 'function') {
         this.notifier = strategy;
@@ -32,7 +33,8 @@ function WebpackErrorNotificationPlugin(strategy) {
 
 WebpackErrorNotificationPlugin.prototype.compileMessage = function(stats) {
     var error;
-    if (stats.hasWarnings()) {
+    if (stats.hasWarnings() &&
+        this.opts.notifyWarnings) {
         error = stats.compilation.warnings[0];
     }
     if (stats.hasErrors()) {
