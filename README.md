@@ -41,7 +41,7 @@ var WebpackErrorNotificationPlugin = require('webpack-error-notification');
 // ...
   module: {
     plugins: [
-      new WebpackErrorNotificationPlugin(/* strategy */),
+      new WebpackErrorNotificationPlugin(/* strategy */, /* options */),
     ]
   },
 // ...
@@ -56,3 +56,5 @@ notification CLI tool of choice.
 
 Main idea here is that, preferrably, people on your team shouldn't have to
 customize webpack config to be able to see notifications.
+
+If you do not want to notify warnings, you can provide `{ notifyWarnings: false }` as options.
