@@ -1,6 +1,6 @@
 {
   "name": "webpack-error-notification",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Use system notification to inform developer about compilation error",
   "main": "index.js",
   "scripts": {

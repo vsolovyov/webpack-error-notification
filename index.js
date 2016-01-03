@@ -1,12 +1,12 @@
-var exec = require('child_process').exec;
+var execFile = require('child_process').execFile;
 
 
 var STRATEGIES = {
     'darwin': function(msg) {
-        exec('terminal-notifier -title Webpack -message ' + msg);
+        execFile('terminal-notifier', ['-title', 'Webpack', '-message', msg]);
     },
     'linux': function(msg) {
-        exec('notify-send Webpack ' + msg);
+        execFile('notify-send', ['Webpack', msg]);
     }
 };
 
@@ -60,7 +60,6 @@ WebpackErrorNotificationPlugin.prototype.compileMessage = function(stats) {
 WebpackErrorNotificationPlugin.prototype.compilationDone = function(stats) {
     var msg = this.compileMessage(stats);
     if (msg) {
-        msg = '"' + msg.replace('"', '\\"') + '"';
         this.notifier(msg);
     }
 };
