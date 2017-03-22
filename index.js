@@ -3,13 +3,28 @@ var execFile = require('child_process').execFile;
 
 var STRATEGIES = {
     'darwin': function(msg) {
+        msg = escapeColors(msg);
         execFile('terminal-notifier', ['-title', 'Webpack', '-message', msg]);
     },
     'linux': function(msg) {
+        msg = escapeColors(msg);
+        msg = escapeHtml(msg);
         execFile('notify-send', ['Webpack', msg]);
     }
 };
 
+function escapeColors(msg) {
+    return msg.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, "");
+}
+
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+ }
 
 function WebpackErrorNotificationPlugin(strategy, opts) {
     this.lastBuildSucceeded = false;
