@@ -84,7 +84,12 @@ WebpackErrorNotificationPlugin.prototype.apply = function(compiler) {
     if (this.notifier === null) {
         console.log('Failed to set error notification.');
     } else {
-        compiler.plugin('done', this.compilationDone.bind(this));
+        if (typeof compiler.hooks === 'undefined') {
+            // Backwards-compatible for pre webpack-4
+            compiler.plugin('done', this.compilationDone.bind(this));
+        } else {
+            compiler.hooks.done.tap("webpack-error-notification", this.compilationDone.bind(this))
+        }
     }
 };
 
